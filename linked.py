@@ -17,6 +17,9 @@ class Linked(object):
 
     def print_list(self):
         cur_node = self.head
+        if cur_node is None:
+            print("Empty List")
+            return
         while cur_node.get_next() is not None:
             print(cur_node.val, end=', ')
             cur_node = cur_node.get_next()
