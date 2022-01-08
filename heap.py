@@ -11,7 +11,7 @@ def swap(node1, node2):
 
 def get_parent(node, index):
     res = node
-    for i in range(0,index - math.floor(index / 2)):
+    for i in range(index - math.floor(index / 2)):
         res = res.get_prev()
     return res
 
@@ -44,7 +44,7 @@ def reverse_heapify(node, index):
 
 def heapify(node, index):
     parent = get_parent(node, index)
-    if parent is None or parent.get_val() <= node.get_val():
+    if parent is None or parent.get_val() < node.get_val():
         return
     else:
         swap(node, parent)
@@ -53,6 +53,7 @@ def heapify(node, index):
 
 
 class HeapA(Linked):
+
     def __init__(self):
         self.length = 0
         self.tail = None
