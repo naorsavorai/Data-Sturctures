@@ -1,6 +1,4 @@
-from linked import Linked
-from heap import HeapA
-from node import Node
+from heap import HeapA, HeapB
 
 
 def get_command(inp, i):
@@ -20,9 +18,9 @@ def get_command(inp, i):
     return command
 
 
-def user_input_parser(command, user_input, dic):
+def user_input_parser(command, user_input, dic, flag):
     if command == "BuildHeap" or command == "buildheap":
-        use_make_heap(user_input, dic)
+        use_make_heap(user_input, dic, flag)
         return
     if command == "Insert" or command == "insert":
         use_insert(user_input, dic)
@@ -56,8 +54,10 @@ def use_merge(inp, dic):
         if heap1 is None or heap2 is None:
             print("Couldn't find one of requested heaps")
         else:
-            heap1.merge(heap2)
-            print(f"Merged heap {heap2_name} into  heap {heap1_name}")
+            res = heap1.merge(heap2)
+            res_name = f"{heap1_name}#{heap2_name}"
+            dic[res_name] = res
+            print(f"Merged heap {heap2_name} and {heap1_name} into heap {res_name}")
 
 
 def use_get_minimum(inp, dic):
@@ -85,17 +85,20 @@ def use_extract_min(inp, dic):
         if heap is None:
             print("Couldn't find the requested heap")
         else:
-            res = heap.get_minimum()
+            res = heap.extract_min()
             print(f"Extracted minimum of heap {res} from heap {heaps_name}")
 
 
-def use_make_heap(inp, dic):
+def use_make_heap(inp, dic, flag):
     aux = inp.split(" ")
     if len(aux) < 2:
         print("Invalid input: Please enter a heap name ")
     else:
         heaps_name = aux[1]
-        new_heap = HeapA()
+        if flag == "unsorted":
+            new_heap = HeapA()
+        else:
+            new_heap = HeapB()
         dic[f"{heaps_name}"] = new_heap
         print(f"Made heap: {heaps_name}")
 
@@ -112,9 +115,12 @@ def use_insert(inp, dic):
             print("Couldn't find the requested heap")
         else:
             for index in range(2, len(aux)):
-                value = int(aux[index])
-                heap.insert(value)
-                print(f"Inserted {value} to heap {heaps_name}")
+                try:
+                    value = int(aux[index])
+                    heap.insert(value)
+                    print(f"Inserted {value} to heap {heaps_name}")
+                except ValueError:
+                    continue
 
 
 def use_print_heap(inp, dic):
@@ -130,17 +136,35 @@ def use_print_heap(inp, dic):
             heap.print_list()
 
 
-"""********************************************************* Main program ************************************************** """
+"""********************************************************* Main program *************************************************************************************************** """
 heaps = {}
 num = 0
-print("Pleas enter your commands:")
 while True:
+    try:
+        flag = input("Please enter \"sorted\" for sorted lists or \"unsorted\" for unsorted lists:")
+        if flag != "sorted" and flag != "unsorted" and flag != "stop":
+            print("Not a flag")
+            raise RuntimeWarning("Wrong Flag")
+        break
+    except RuntimeWarning:
+        continue
+if flag != "stop":
+    print(f"Flag confirmed, using {flag} data structures, please enter your commands:")
+else:
+    print("flag \"stop\" is confirmed exiting program")
+while True:
+    if flag == "stop":
+        break
     i = 0
-    user_input = input()
+    try:
+        user_input = input()
+    except EOFError:
+        print("Good Bye")
+        break
     command = get_command(user_input, i)
     if user_input == "":
         continue
     if command == 'stop' or command == 'Stop':
         print("Good Bye ")
         break
-    user_input_parser(command, user_input, heaps)
+    user_input_parser(command, user_input, heaps, flag)

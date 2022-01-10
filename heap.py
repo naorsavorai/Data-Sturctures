@@ -56,8 +56,14 @@ class HeapA(Linked):
 
     def __init__(self):
         self.length = 0
-        self.tail = None
         self.head = None
+        self.tail = None
+
+    def initiate(self, heap):
+        cur_node = heap.get_head()
+        while cur_node is not None:
+            self.insert(cur_node.get_val())
+            cur_node = cur_node.get_next()
 
     def insert(self, x):
         new_node = Node(x)
@@ -88,7 +94,92 @@ class HeapA(Linked):
         return minimum
 
     def merge(self, heap2):
+        res = HeapA()
+        res.initiate(self)
         cur = heap2.get_head()
         while cur is not None:
-            self.insert(cur.get_val())
+            res.insert(cur.get_val())
             cur = cur.get_next()
+        return res
+
+
+class HeapB(Linked):
+
+    def __init__(self):
+        self.length = 0
+        self.tail = None
+        self.head = None
+
+    def insert(self, val):
+        new_node = Node(val)
+        if self.head is None:
+            self.head = new_node
+            self.tail = self.head
+        elif val < self.get_tail().get_val():
+            print("Error: Input must be sorted ")
+        else:
+            prev_node = self.head
+            if prev_node.get_val() >= val:
+                new_node.set_next(prev_node)
+                prev_node.set_prev(new_node)
+                self.head = new_node
+                return
+            next_node = self.head.get_next()
+            while next_node is not None:
+                if prev_node.get_val() <= val < next_node.get_val():
+                    new_node.set_next(next_node)
+                    new_node.set_prev(prev_node)
+                    prev_node.set_next(new_node)
+                    next_node.set_prev(new_node)
+                    return
+                prev_node = prev_node.get_next()
+                next_node = next_node.get_next()
+            new_node.set_prev(prev_node)
+            prev_node.set_next(new_node)
+
+    def get_minimum(self):
+        minimum = self.get_head().get_val()
+        return minimum
+
+    def extract_min(self):
+        res = self.get_minimum()
+        new_head = self.get_head().get_next()
+        old_head = self.get_head()
+        new_head.set_prev(None)
+        old_head.set_next(None)
+        self.head = new_head
+        return res
+
+    def merge(self, sorted_list):
+        res = HeapB()
+        a_node = self.get_head()
+        b_node = sorted_list.get_head()
+        if a_node.get_val() <= b_node.get_val():
+            cur_node = Node(a_node.get_val())
+            a_node = a_node.get_next()
+        else:
+            cur_node = Node(b_node.get_val())
+            b_node = b_node.get_next()
+        res.set_head(cur_node)
+        while a_node is not None and b_node is not None:
+            if a_node.get_val() <= b_node.get_val():
+                cur_node.set_next(Node(a_node.get_val()))
+                a_node = a_node.get_next()
+            else:
+                cur_node.set_next(Node(b_node.get_val()))
+                b_node = b_node.get_next()
+            cur_node = cur_node.get_next()
+
+        if a_node is None and b_node is not None:
+            while b_node is not None:
+                cur_node.set_next(Node(b_node.get_val()))
+                b_node = b_node.get_next()
+                cur_node = cur_node.get_next()
+
+        if b_node is None and a_node is not None:
+            while a_node is not None:
+                cur_node.set_next(Node(a_node.get_val()))
+                a_node = a_node.get_next()
+                cur_node = cur_node.get_next()
+        res.set_tail(cur_node)
+        return res

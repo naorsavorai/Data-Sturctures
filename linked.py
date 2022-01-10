@@ -7,8 +7,9 @@ class Linked(object):
     length = 0
 
     def __init__(self):
+        self.length = 0
         self.head = None
-        self.tail = self.head
+        self.tail = None
 
     def __init__(self, intgr):
         self.length += 1
@@ -30,3 +31,12 @@ class Linked(object):
 
     def get_tail(self):
         return self.tail
+
+    def get_length(self):
+        return self.length
+
+    def set_head(self, node):
+        self.head = node
+
+    def set_tail(self, node):
+        self.tail = node

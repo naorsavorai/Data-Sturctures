@@ -1,0 +1,14 @@
+unsorted
+buildheap one
+buildheap two
+insert one 5 -7 3
+printheap one
+extractmin one
+getmin one
+insert two -899 900
+printheap two
+union one two
+printheap one#two
+printheap one
+printheap two
+
